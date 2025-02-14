@@ -3,9 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Start Button</title>
+    <title>Task Completion Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #4c4f9f, #7a3cb1);
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .input-container {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        input[type="number"] {
+            padding: 10px;
+            width: 150px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: none;
+        }
+        .card {
+            background-color: #ffffff;
+            color: black;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            width: 30%;
+        }
+        .chart-container {
+            margin-top: 40px;
+            height: 400px;
+            position: relative;
+            width: 100%;
+            background-color: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .rocket {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            transition: bottom 0.5s ease-out;
+        }
+        #graph-line {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 2px;
+            background-color: blue;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 20px;
+        }
+    </style>
 </head>
 <body>
-    <button>Start</button>
+
+<div class="container">
+    <h1>Task Completion Tracker</h1>
+    <div class="input-container">
+        <div class="card">
+            <label for="totalTasks">Total Tasks:</label><br>
+            <input type="number" id="totalTasks" placeholder="Enter total tasks">
+        </div>
+        <div class="card">
+            <label for="completedTasks">Completed Tasks:</label><br>
+            <input type="number" id="completedTasks" placeholder="Enter completed tasks">
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <div id="graph-line"></div>
+        <img src="rocket.png" alt="Rocket" class="rocket" id="rocket">
+    </div>
+
+    <div class="result">
+        <p>Completion Percentage: <span id="percentage">0%</span></p>
+    </div>
+</div>
+
+<script>
+    const totalTasksInput = document.getElementById('totalTasks');
+    const completedTasksInput = document.getElementById('completedTasks');
+    const percentageDisplay = document.getElementById('percentage');
+    const rocket = document.getElementById('rocket');
+    const graphLine = document.getElementById('graph-line');
+
+    function calculateCompletion() {
+        const totalTasks = parseInt(totalTasksInput.value);
+        const completedTasks = parseInt(completedTasksInput.value);
+
+        if (isNaN(totalTasks) || isNaN(completedTasks) || totalTasks === 0) {
+            percentageDisplay.textContent = '0%';
+            rocket.style.bottom = '0%';
+            return;
+        }
+
+        const percentage = Math.min(Math.max((completedTasks / totalTasks) * 100, 0), 100);
+        percentageDisplay.textContent = `${Math.round(percentage)}%`;
+
+        const rocketPosition = (percentage / 100) * 100;
+        rocket.style.bottom = `${rocketPosition}%`;
+
+        graphLine.style.height = `${percentage}%`;
+    }
+
+    totalTasksInput.addEventListener('input', calculateCompletion);
+    completedTasksInput.addEventListener('input', calculateCompletion);
+</script>
+
 </body>
 </html>
