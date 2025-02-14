@@ -48,23 +48,21 @@
             overflow: hidden;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
-        #graph-line {
+        .progress-line {
             position: absolute;
             bottom: 0;
             left: 0;
-            width: 0%;
             height: 2px;
             background-color: blue;
-            transform: rotate(45deg);
             transform-origin: bottom left;
+            transform: rotate(45deg);
         }
         .rocket {
             position: absolute;
             bottom: 0;
             left: 0;
-            transform: translateX(0) translateY(0);
             width: 50px;
-            transition: left 0.5s ease-out;
+            transition: transform 0.5s ease-out;
         }
         .result {
             margin-top: 20px;
@@ -88,8 +86,8 @@
     </div>
 
     <div class="chart-container">
-        <div id="graph-line"></div>
-        <img src="5537993.png" alt="Rocket" class="rocket" id="rocket">
+        <div class="progress-line" id="graph-line"></div>
+        <img src="rocket.png" alt="Rocket" class="rocket" id="rocket">
     </div>
 
     <div class="result">
@@ -110,7 +108,7 @@
 
         if (isNaN(totalTasks) || isNaN(completedTasks) || totalTasks === 0) {
             percentageDisplay.textContent = '0%';
-            rocket.style.left = '0%';
+            rocket.style.transform = 'translate(0, 0)';
             graphLine.style.width = '0%';
             return;
         }
@@ -118,11 +116,11 @@
         const percentage = Math.min(Math.max((completedTasks / totalTasks) * 100, 0), 100);
         percentageDisplay.textContent = `${Math.round(percentage)}%`;
 
-        // Rocket position based on percentage
+        // Update rocket position along diagonal line
         const rocketPosition = (percentage / 100) * 100;
-        rocket.style.left = `${rocketPosition}%`;
+        rocket.style.transform = `translate(${rocketPosition}%, ${rocketPosition}%)`;
 
-        // Line behind rocket fills diagonally based on percentage
+        // Fill the progress line diagonally
         graphLine.style.width = `${percentage}%`;
     }
 
