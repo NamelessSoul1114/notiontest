@@ -48,20 +48,23 @@
             overflow: hidden;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
-        .rocket {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 50px;
-            transition: bottom 0.5s ease-out;
-        }
         #graph-line {
             position: absolute;
             bottom: 0;
-            width: 100%;
+            left: 0;
+            width: 0%;
             height: 2px;
             background-color: blue;
+            transform: rotate(45deg);
+            transform-origin: bottom left;
+        }
+        .rocket {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            transform: translateX(0) translateY(0);
+            width: 50px;
+            transition: left 0.5s ease-out;
         }
         .result {
             margin-top: 20px;
@@ -107,17 +110,20 @@
 
         if (isNaN(totalTasks) || isNaN(completedTasks) || totalTasks === 0) {
             percentageDisplay.textContent = '0%';
-            rocket.style.bottom = '0%';
+            rocket.style.left = '0%';
+            graphLine.style.width = '0%';
             return;
         }
 
         const percentage = Math.min(Math.max((completedTasks / totalTasks) * 100, 0), 100);
         percentageDisplay.textContent = `${Math.round(percentage)}%`;
 
+        // Rocket position based on percentage
         const rocketPosition = (percentage / 100) * 100;
-        rocket.style.bottom = `${rocketPosition}%`;
+        rocket.style.left = `${rocketPosition}%`;
 
-        graphLine.style.height = `${percentage}%`;
+        // Line behind rocket fills diagonally based on percentage
+        graphLine.style.width = `${percentage}%`;
     }
 
     totalTasksInput.addEventListener('input', calculateCompletion);
