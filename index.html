@@ -3,129 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Task Completion Tracker</title>
+    <title>Task Progress Tracker</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: linear-gradient(to bottom, #4c4f9f, #7a3cb1);
+            background-color: #2c2f4e;
             color: white;
             text-align: center;
-            margin: 0;
-            padding: 0;
         }
+
         .container {
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 20px;
+            width: 80%;
+            margin: 50px auto;
         }
+
+        .chart {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(to top right, #6a3ecf, #222d6d);
+            border: 2px solid white;
+            border-radius: 10px;
+        }
+
+        .line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: white;
+            transform: translateY(-50%);
+        }
+
+        .circle {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border-radius: 50%;
+            transform: translateY(-50%);
+            transition: left 0.5s ease-out;
+        }
+
         .input-container {
             display: flex;
             justify-content: space-around;
-            margin: 20px 0;
+            margin-top: 20px;
         }
-        input[type="number"] {
-            padding: 10px;
-            width: 150px;
-            font-size: 16px;
-            border-radius: 8px;
-            border: none;
-        }
-        .card {
-            background-color: #ffffff;
-            color: black;
+
+        .input-card {
+            background-color: #3a3e5e;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             width: 30%;
         }
-        .chart-container {
-            margin-top: 40px;
-            height: 400px;
-            position: relative;
+
+        .input-card input {
             width: 100%;
-            background-color: #fff;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #fff;
+            border-radius: 5px;
+            background-color: #4a4f6d;
+            color: white;
         }
-        .progress-line {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            height: 2px;
-            background-color: blue;
-            transform-origin: bottom left;
-            transform: rotate(45deg);
+
+        .input-card label {
+            font-weight: bold;
         }
-        .rocket {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 50px;
-            transition: transform 0.5s ease-out;
-        }
-        .result {
+
+        .percentage {
             margin-top: 20px;
-            font-size: 20px;
         }
+
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Task Completion Tracker</h1>
+    <div class="chart">
+        <div class="line"></div>
+        <div class="circle" id="circle"></div>
+    </div>
+
     <div class="input-container">
-        <div class="card">
-            <label for="totalTasks">Total Tasks:</label><br>
-            <input type="number" id="totalTasks" placeholder="Enter total tasks">
+        <div class="input-card">
+            <label for="totalTasks">Total Tasks</label>
+            <input type="number" id="totalTasks" placeholder="Enter total tasks" oninput="updateProgress()">
         </div>
-        <div class="card">
-            <label for="completedTasks">Completed Tasks:</label><br>
-            <input type="number" id="completedTasks" placeholder="Enter completed tasks">
+
+        <div class="input-card">
+            <label for="completedTasks">Completed Tasks</label>
+            <input type="number" id="completedTasks" placeholder="Enter completed tasks" oninput="updateProgress()">
         </div>
     </div>
 
-    <div class="chart-container">
-        <div class="progress-line" id="graph-line"></div>
-        <img src="123.png" alt="Rocket" class="rocket" id="rocket">
-    </div>
-
-    <div class="result">
-        <p>Completion Percentage: <span id="percentage">0%</span></p>
+    <div class="percentage">
+        <p>Completion: <span id="percentageDisplay">0%</span></p>
     </div>
 </div>
 
 <script>
-    const totalTasksInput = document.getElementById('totalTasks');
-    const completedTasksInput = document.getElementById('completedTasks');
-    const percentageDisplay = document.getElementById('percentage');
-    const rocket = document.getElementById('rocket');
-    const graphLine = document.getElementById('graph-line');
+    function updateProgress() {
+        const totalTasks = document.getElementById('totalTasks').value;
+        const completedTasks = document.getElementById('completedTasks').value;
+        const percentage = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
 
-    function calculateCompletion() {
-        const totalTasks = parseInt(totalTasksInput.value);
-        const completedTasks = parseInt(completedTasksInput.value);
+        const circle = document.getElementById('circle');
+        const percentageDisplay = document.getElementById('percentageDisplay');
 
-        if (isNaN(totalTasks) || isNaN(completedTasks) || totalTasks === 0) {
-            percentageDisplay.textContent = '0%';
-            rocket.style.transform = 'translate(0, 0)';
-            graphLine.style.width = '0%';
-            return;
+        // Update circle position and color based on the percentage
+        const maxWidth = document.querySelector('.chart').offsetWidth;
+        const newLeft = (percentage / 100) * maxWidth;
+
+        circle.style.left = `${newLeft}px`;
+
+        // Change the line color to blue when tasks are completed
+        if (percentage > 0) {
+            document.querySelector('.line').style.backgroundColor = '#3e81d2';
+        } else {
+            document.querySelector('.line').style.backgroundColor = 'white';
         }
 
-        const percentage = Math.min(Math.max((completedTasks / totalTasks) * 100, 0), 100);
-        percentageDisplay.textContent = `${Math.round(percentage)}%`;
-
-        // Update rocket position along diagonal line
-        const rocketPosition = (percentage / 100) * 100;
-        rocket.style.transform = `translate(${rocketPosition}%, ${rocketPosition}%)`;
-
-        // Fill the progress line diagonally
-        graphLine.style.width = `${percentage}%`;
+        percentageDisplay.textContent = `${Math.min(Math.max(percentage, 0), 100).toFixed(2)}%`;
     }
-
-    totalTasksInput.addEventListener('input', calculateCompletion);
-    completedTasksInput.addEventListener('input', calculateCompletion);
 </script>
 
 </body>
